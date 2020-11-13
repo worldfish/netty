@@ -14,6 +14,8 @@ import io.netty.util.CharsetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 public class ClientHandler extends ChannelInboundHandlerAdapter {
@@ -36,14 +38,10 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
     /**循环次数 */
     private int fcount = 1;
 
-    /**唯一标记 */
-    private boolean initFalg=true;
-
-    //private byte[] req;
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        try {
+        /*try {
             byte[] req = new byte[]{(byte) 0x68,(byte) 0x04,(byte) 0x83,(byte) 0x00,(byte) 0x00,(byte) 0x00};
             ByteBuf result;
             logger.info("向服务器发送数据{}",req);
@@ -53,28 +51,69 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
             ctx.channel().writeAndFlush(result);
         } catch (Exception e) {
             System.out.println("报文解析错误");
+        }*/
+        logger.info("建立连接！");
+
+
+
+        try {
+            byte[] req = new byte[]{(byte) 0x68, (byte) 0x3F, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+                    (byte) 0x89, (byte) 0x09, (byte) 0x06, (byte) 0x00, (byte) 0x01, (byte) 0x00,
+                    (byte) 0x01, (byte) 0x67, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x02,
+                    (byte) 0x67, (byte) 0x00, (byte) 0x4D, (byte) 0x09, (byte) 0x0E, (byte) 0x67,
+                    (byte) 0x00, (byte) 0x97, (byte) 0x09, (byte) 0x65, (byte) 0x67, (byte) 0x00,
+                    (byte) 0x20, (byte) 0x0A, (byte) 0xB0, (byte) 0x67, (byte) 0x00, (byte) 0xF4,
+                    (byte) 0x07, (byte) 0xCE, (byte) 0x67, (byte) 0x00, (byte) 0x10, (byte) 0x08,
+                    (byte) 0xDC, (byte) 0x67, (byte) 0x00, (byte) 0x9C, (byte) 0x0A, (byte) 0xE4,
+                    (byte) 0x67, (byte) 0x00, (byte) 0x2A, (byte) 0x08, (byte) 0x21, (byte) 0x68,
+                    (byte) 0x00, (byte) 0x9A, (byte) 0x0A, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+                    (byte) 0x00, (byte) 0x00, (byte) 0x0A, (byte) 0x0B, (byte) 0x14 };
+            ByteBuf result;
+            logger.info("向服务器发送数据{}",req);
+            result = Unpooled.buffer(req.length);
+            result.writeBytes(req);
+            ctx.channel().writeAndFlush(result);
+
+        } catch (Exception e) {
+            System.out.println("报文解析错误");
         }
+
     }
 
     //当通道有读取事件时，会触发
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        String message = (String)msg;
+        /*String message = (String)msg;
         if("client_request".equals(message)){
             logger.info("第{}次，收到服务器消息：{}",count,message.getBytes("UTF-8"));
             count++;
         }
-        logger.info("收到服务器主动发过来的消息：{}",message.getBytes("UTF-8"));
+        logger.info("收到服务器主动发过来的消息：{}",message.getBytes("UTF-8"));*/
         //System.out.println("第"+count+"次"+",客户端接受的消息:"+msg);
+
+
+        logger.info("接收报文：{}",msg);
+        /*String message = (String)msg;
+        String[] messageArr = message.split(" ");
+        int length = messageArr.length;
+        byte[] req = new byte[length];
+
+        for (int i = 0;i<length;i++){
+            req[i] = (byte)Integer.parseInt(messageArr[i], 16);
+        }
+
+        logger.info("收到回复数据：{}",req);*/
+
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        logger.error(cause.getStackTrace().toString());
         cause.printStackTrace();
-        ctx.close();
-    }
 
-    //channelInactive()方法。当服务器关闭客户端channel时，会触发这个回调方法
+        super.exceptionCaught(ctx, cause);
+        /*ctx.close();*/
+    }
 
 
     /**
@@ -98,13 +137,14 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
         }
     }
 
+    //channelInactive()方法。当服务器关闭客户端channel时，会触发这个回调方法
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        System.out.println("client exit,will reconnect.."+new Date());
+        /*System.out.println("client exit,will reconnect.."+new Date());
         //client.doConnect(String.valueOf(ctx.channel().remoteAddress()),6668);
         //final EventLoop group = ctx.channel().eventLoop();
         Client client = new Client();
         client.doConnect(new Bootstrap(),group);
-        super.channelInactive(ctx);
+        super.channelInactive(ctx);*/
     }
 }

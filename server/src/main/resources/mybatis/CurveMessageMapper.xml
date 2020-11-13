@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.server.demo.protocol.mapper.CurveMessageMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.server.demo.protocol.entity.CurveMessage">
+                <id column="id" property="id" />
+                <result column="receive_byte_stream" property="receiveByteStream" />
+                <result column="reply_byte_stream" property="replyByteStream" />
+                <result column="protocol_version" property="protocolVersion" />
+                <result column="protocol_type" property="protocolType" />
+                <result column="curve_date" property="curveDate" />
+                <result column="create_time" property="createTime" />
+                <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+    id, receive_byte_stream, reply_byte_stream, protocol_version, protocol_type, curve_date, create_time, update_time
+    </sql>
+
+    <insert id="insert" >
+        INSERT INTO curve_message(
+			receive_byte_stream,
+			reply_byte_stream,
+			protocol_version,
+			protocol_type,
+			curve_date,
+			create_time,
+			update_time
+		) VALUES (
+			#{receiveByteStream},
+			#{replyByteStream},
+			#{protocolVersion},
+			#{protocolType},
+			#{curveDate},
+			#{createTime},
+			#{updateTime}
+		)
+    </insert>
+
+</mapper>

@@ -1,6 +1,7 @@
 package com.example.client.demo.net;
 
 
+import com.example.client.demo.protocol.MyDecoder;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -10,11 +11,12 @@ import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.handler.timeout.IdleStateHandler;
 
+import java.nio.charset.Charset;
 import java.util.concurrent.TimeUnit;
 
 public class Client {
 
-    private String ip = "172.20.1.206";
+    private String ip = "172.20.1.208";
     private int port = 6668;
 
 
@@ -49,7 +51,7 @@ public class Client {
 
             //启动客户端去连接服务器
             //关于ChannelFuture要分析，涉及到netty的异步模型
-            ChannelFuture channelFuture = bootstrap.connect("172.20.1.206",6668).sync();
+            ChannelFuture channelFuture = bootstrap.connect("172.20.1.208",6668).sync();
             //给关闭通道进行监听
             channelFuture.channel().closeFuture().sync();
 
@@ -72,9 +74,11 @@ public class Client {
                         .handler(new ChannelInitializer<SocketChannel>() {
                             @Override
                             protected void initChannel(SocketChannel ch) throws Exception {
+
                                 ch.pipeline().addLast(new IdleStateHandler(0,4,0, TimeUnit.SECONDS));//心跳机制,每隔30秒进行读操作
-                                ch.pipeline().addLast(new StringDecoder());
-                                ch.pipeline().addLast(new StringEncoder());
+                                ch.pipeline().addLast(new StringDecoder(Charset.forName("UTF-8")));
+                                ch.pipeline().addLast(new StringEncoder(Charset.forName("GBK")));
+                                //ch.pipeline().addLast("encoder",new MyDecoder());
                                 ch.pipeline().addLast(new ClientHandler());//加入自己的处理器
                             }
                         })

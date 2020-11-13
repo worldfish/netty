@@ -1,5 +1,6 @@
 package com.example.server.demo.net;
 
+
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -12,6 +13,7 @@ import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.handler.timeout.IdleStateHandler;
 
+import java.nio.charset.Charset;
 import java.util.concurrent.TimeUnit;
 
 public class Server {
@@ -43,8 +45,10 @@ public class Server {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ch.pipeline().addLast(new IdleStateHandler(5,0,0, TimeUnit.SECONDS));//心跳机制，超时断开
-                            ch.pipeline().addLast(new StringDecoder());
-                            ch.pipeline().addLast(new StringEncoder());
+                            //ch.pipeline().addLast(new StringDecoder(Charset.forName("UTF-8")));
+                            //ch.pipeline().addLast(new StringEncoder());
+                            ch.pipeline().addLast("decoder",new MyDecoder());
+                            ch.pipeline().addLast(new StringEncoder(Charset.forName("GBK")));
                             ch.pipeline().addLast(new ServerHandler());
                         }
                     });//给我们的workerGroup的 EventLoop对应的管道设置处理器。
